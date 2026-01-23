@@ -1,6 +1,6 @@
 {
   "name": "eventbus-z",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Minimal, framework-agnostic EventBus for UI signaling and cross-runtime communication",
   "main": "build/index.js",
   "module": "build/index.esm.js",

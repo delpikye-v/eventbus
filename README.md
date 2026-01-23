@@ -1,4 +1,4 @@
-# eventbus-z
+# 📡 eventbus-z
 
 [![NPM](https://img.shields.io/npm/v/eventbus-z.svg)](https://www.npmjs.com/package/eventbus-z) ![Downloads](https://img.shields.io/npm/dt/eventbus-z.svg)
 
@@ -46,8 +46,8 @@ npm install eventbus-z
 
 ```ts
 
-// import EventBus from "eventbus-z";
-import { $on, $off, $emit } from "eventbus-z";
+import EventBus from "eventbus-z";
+// import { $on, $off, $emit } from "eventbus-z";
 ```
 
 ---
@@ -72,6 +72,7 @@ EventBus.$emit("PING");
 import React from "react";
 import EventBus from "eventbus-z";
 
+// Note: callback reference must be stable
 export default function App() {
   React.useEffect(() => {
     const handler = (value: number) => {
@@ -114,6 +115,7 @@ export function useEventBus(
 ### 4️⃣ Typed EventBus (TypeScript)
 
 ```ts
+// Type-safe at compile time, zero runtime cost
 import { createTypedEventBus } from "eventbus-z";
 
 type AppEvents = {
@@ -155,8 +157,8 @@ busB.$emit("PING"); // nothing happens
 
 #### Cached
 ```ts
-// query.ts
-const getUser = cache(async (id) => fetchUser(id))
+// cache is user-land utility, not from eventbus-z
+const getUser = cached(async (id) => fetchUser(id))
 
 // event
 EventBus.$emit("USER_REQUEST", id)
@@ -172,32 +174,32 @@ EventBus.$on("USER_REQUEST", async (id) => {
 
 ### Global Events (default scope)
 
-| Method | Description |
-|------|------------|
-| `$emit(name, ...args)` | Emit event |
-| `$once(name, callback)` | Listen once |
-| `$on(name, callback)` | Single listener (unique callback) |
-| `$onMultiple(name, callback)` | Allow multiple listeners |
-| `$onCached(name, callback, time?)` | Single listener with cache |
-| `$onCachedMultiple(name, callback, time?)` | Multi listeners with cache |
-| `$off(name, callback)` | Remove listener |
-| `$offAll(name)` | Remove all listeners |
-| `$clearAllEventName(name)` | Remove event from all scopes |
+| Method                                                   | Description |
+|----------------------------------------------------------|-------------|
+| `$emit(name, ...args)`                                   | Emit event  |
+| `$once(name, callback)`                                  | Listen once |
+| `$on(name, callback)`                                    | Single listener (unique callback) |
+| `$onMultiple(name, callback)`                            | Allow multiple listeners |
+| `$onCached(name, callback, time?)`                       | Single listener with cache |
+| `$onCachedMultiple(name, callback, time?)`               | Multi listeners with cache |
+| `$off(name, callback)`                                   | Remove listener |
+| `$offAll(name)`                                          | Remove all listeners |
+| `$clearEventAcrossScopes(name)`                          | Remove event name from all scopes & caches |
 
 ---
 
 ### Scoped Events
 
-| Method | Description |
-|------|------------|
-| `$scopeEmit(name, scope, ...args)` | Emit event in scope |
-| `$scopeOnce(name, scope, callback)` | Listen once in scope |
-| `$scopeOn(name, scope, callback)` | Single listener in scope |
-| `$scopeOnMultiple(name, scope, callback)` | Multiple listeners |
-| `$scopeOnCached(name, scope, callback, time?)` | Cached listener |
-| `$scopeOnCachedMultiple(name, scope, callback, time?)` | Cached multi |
-| `$scopeOff(name, scope, callback?)` | Remove listener |
-| `$scopeOffAll(name, scope)` | Remove all listeners |
+| Method                                                    | Description |
+|-----------------------------------------------------------|------------|
+| `$scopeEmit(name, scope, ...args)`                        | Emit event in scope |
+| `$scopeOnce(name, scope, callback)`                       | Listen once in scope |
+| `$scopeOn(name, scope, callback)`.                        | Single listener in scope |
+| `$scopeOnMultiple(name, scope, callback)`                 | Multiple listeners |
+| `$scopeOnCached(name, scope, callback, time?)`            | Cached listener |
+| `$scopeOnCachedMultiple(name, scope, callback, time?)`.   | Cached multi |
+| `$scopeOff(name, scope, callback?)`.                      | Remove listener |
+| `$scopeOffAll(name, scope)`.                              | Remove all listeners |
 
 ---
 
@@ -212,6 +214,19 @@ If you need:
 - state → use a store
 - async pipelines → use effects
 - business logic → keep it outside EventBus
+
+---
+
+## Non-goals
+
+eventbus-z is intentionally minimal.
+
+It does NOT provide:
+- State management
+- Async pipelines or queues
+- Middleware or plugins
+- Event replay / history
+- Rx / stream semantics
 
 ---
 
