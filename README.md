@@ -2,39 +2,50 @@
 
 [![NPM](https://img.shields.io/npm/v/eventbus-z.svg)](https://www.npmjs.com/package/eventbus-z) ![Downloads](https://img.shields.io/npm/dt/eventbus-z.svg)
 
-<a href="https://codesandbox.io/s/d5robq">LIVE EXAMPLE</a>
+<a href="https://codesandbox.io/s/d5robq" target="_blank">LIVE EXAMPLE</a>
 
 ---
 
-## Description
+**eventbus-z** is a minimal, framework-agnostic EventBus  
+for deterministic UI-level signaling.
 
-A **minimal, framework-agnostic EventBus** for frontend applications.
+Zero dependencies. No shared state. No magic.
 
-**What it is**
-- Simple `emit / listen` event bus
-- No shared state, no side effects, no magic
-- Designed for UI-level communication
-
-**What it is NOT**
-- Not a state manager
-- Not a data pipeline
-- Not a middleware system
+> Emit. Listen. Done.
 
 ---
 
-## Features
+## ✨ Why eventbus-z?
 
-- ✅ Simple API (`emit / on / off`)
-- ✅ Typed events (TypeScript, optional)
-- ✅ Global shared bus (safe `window.top` + `globalThis`)
-- ✅ Multi-instance (isolated buses)
-- ✅ Micro-frontend & iframe friendly
-- ✅ Works with React / Vue / Angular / Vanilla JS
-- ✅ Zero dependencies
+- Simple `emit / on / off`
+- Deterministic synchronous execution
+- Scoped events
+- Multi-instance isolation
+- Micro-frontend & iframe safe
+- Type-safe (optional)
+- Zero dependencies
+- No middleware. No hidden behavior.
 
 ---
 
-## Installation
+## 🧠 Mental Model
+
+**eventbus-z** is a synchronous signaling layer.
+
+It is NOT:
+
+- A state manager  
+- A data pipeline  
+- A middleware system  
+- A stream abstraction  
+
+It is designed for:
+
+> UI signaling and infrastructure-level event coordination.
+
+---
+
+## 📦 Installation
 
 ```bash
 npm install eventbus-z
@@ -42,214 +53,273 @@ npm install eventbus-z
 
 ---
 
-## Import
+## ⚡ Quick Start
 
 ```ts
+import EventBus from "eventbus-z"
 
-import EventBus from "eventbus-z";
-// import { $on, $off, $emit } from "eventbus-z";
-```
-
----
-
-## Usage
-
-### 1️⃣ Basic usage (Vanilla / any framework)
-
-```ts
 EventBus.$on("PING", () => {
-  console.log("pong");
-});
+  console.log("pong")
+})
 
-EventBus.$emit("PING");
+EventBus.$emit("PING")
+```
+
+✔ Synchronous  
+✔ Deterministic  
+✔ Zero side effects  
+
+---
+
+## 🔹 Core Usage
+
+### Listen
+
+```ts
+EventBus.$on("LOGIN", (userId) => {
+  console.log(userId)
+})
+```
+
+### Emit
+
+```ts
+EventBus.$emit("LOGIN", "user-1")
+```
+
+### Once
+
+```ts
+EventBus.$once("READY", () => {
+  console.log("Triggered once")
+})
+```
+
+### Remove
+
+```ts
+EventBus.$off("LOGIN", handler)
+EventBus.$offAll("LOGIN")
 ```
 
 ---
 
-### 2️⃣ React example (effect-safe)
+## 🔹 React Example (Effect-safe)
 
 ```tsx
-import React from "react";
-import EventBus from "eventbus-z";
+import React from "react"
+import EventBus from "eventbus-z"
 
-// Note: callback reference must be stable
 export default function App() {
   React.useEffect(() => {
     const handler = (value: number) => {
-      alert(value);
-    };
+      alert(value)
+    }
 
-    EventBus.$on("ALERT", handler);
-    return () => EventBus.$off("ALERT", handler);
-  }, []);
+    EventBus.$on("ALERT", handler)
+    return () => EventBus.$off("ALERT", handler)
+  }, [])
 
   return (
     <button onClick={() => EventBus.$emit("ALERT", 123)}>
       Emit Event
     </button>
-  );
+  )
 }
 ```
 
 ---
 
-### 3️⃣ React hook helper
+## 🔹 React Hook Helper
 
 ```tsx
-import React from "react";
-import { $on, $off } from "eventbus-z";
+import React from "react"
+import { $on, $off } from "eventbus-z"
 
 export function useEventBus(
   name: string,
   callback: (...args: any[]) => void
 ) {
   React.useEffect(() => {
-    $on(name, callback);
-    return () => $off(name, callback);
-  }, [name, callback]);
+    $on(name, callback)
+    return () => $off(name, callback)
+  }, [name, callback])
 }
 ```
 
 ---
 
-### 4️⃣ Typed EventBus (TypeScript)
+## 🔹 Typed EventBus (TypeScript)
+
+Zero runtime cost. Compile-time safety only.
 
 ```ts
-// Type-safe at compile time, zero runtime cost
-import { createTypedEventBus } from "eventbus-z";
+import { createTypedEventBus } from "eventbus-z"
 
 type AppEvents = {
-  login: [userId: string];
-  logout: [];
-};
+  login: [userId: string]
+  logout: []
+}
 
-const bus = createTypedEventBus<AppEvents>();
+const bus = createTypedEventBus<AppEvents>()
 
 bus.$on("login", id => {
-  console.log(id); // string
-});
+  console.log(id) // string
+})
 
-bus.$emit("login", "user-1");
+bus.$emit("login", "user-1")
 
-// bus.$emit("login", 123); // ❌ Type error
+// bus.$emit("login", 123) ❌ Type error
 ```
 
 ---
 
-### 5️⃣ Isolated EventBus instance
+## 🔹 Isolated Instances
 
 Useful for:
+
 - Tests
 - Micro-frontends
 - Embedded apps
+- Domain isolation
 
 ```ts
-import { createEventBus } from "eventbus-z";
+import { createEventBus } from "eventbus-z"
 
-const busA = createEventBus();
-const busB = createEventBus();
+const busA = createEventBus()
+const busB = createEventBus()
 
-busA.$on("PING", () => console.log("A"));
-busB.$emit("PING"); // nothing happens
+busA.$on("PING", () => console.log("A"))
+busB.$emit("PING") // nothing happens
 ```
 
 ---
 
-#### Cached
+## 🔹 Cached Listeners
+
 ```ts
-// cache is user-land utility, not from eventbus-z
-const getUser = cached(async (id) => fetchUser(id))
-
-// event
-EventBus.$emit("USER_REQUEST", id)
-
-// listener
-EventBus.$on("USER_REQUEST", async (id) => {
-  const user = await getUser(id)
-  render(user)
-})
+EventBus.$onCached("USER", handler, 200)
+EventBus.$onCachedMultiple("USER", handler, 200)
 ```
 
-## API
+- `timeCached` prevents rapid duplicate execution
+- Useful for UI-triggered rapid events
+
+---
+
+## 🔹 Scoped Events
+
+Allows event isolation by scope.
+
+```ts
+EventBus.$scopeOn("auth", "LOGIN", handler)
+EventBus.$scopeEmit("auth", "LOGIN", "user-1")
+```
+
+Useful for:
+
+- Micro-frontends
+- Embedded apps
+- Module isolation
+- Multi-tenant systems
+
+---
+
+## 🧩 API
 
 ### Global Events (default scope)
 
-| Method                                                   | Description |
-|----------------------------------------------------------|-------------|
-| `$emit(name, ...args)`                                   | Emit event  |
-| `$once(name, callback)`                                  | Listen once |
-| `$on(name, callback)`                                    | Single listener (unique callback) |
-| `$onMultiple(name, callback)`                            | Allow multiple listeners |
-| `$onCached(name, callback, time?)`                       | Single listener with cache |
-| `$onCachedMultiple(name, callback, time?)`               | Multi listeners with cache |
-| `$off(name, callback)`                                   | Remove listener |
-| `$offAll(name)`                                          | Remove all listeners |
-| `$clearEventAcrossScopes(name)`                          | Remove event name from all scopes & caches |
+| Method                                     | Description                       |
+| ------------------------------------------ | --------------------------------- |
+| `$emit(name, ...args)`                     | Emit event                        |
+| `$once(name, callback)`                    | Listen once                       |
+| `$on(name, callback)`                      | Single listener (unique callback) |
+| `$onMultiple(name, callback)`              | Allow multiple listeners          |
+| `$onCached(name, callback, time?)`         | Cached single listener            |
+| `$onCachedMultiple(name, callback, time?)` | Cached multi listener             |
+| `$off(name, callback?)`                    | Remove listener                   |
+| `$offAll(name)`                            | Remove all listeners              |
+| `$clearEventAcrossScopes(name)`            | Remove event from all scopes      |
 
 ---
 
 ### Scoped Events
 
-| Method                                                    | Description |
-|-----------------------------------------------------------|------------|
-| `$scopeEmit(name, scope, ...args)`                        | Emit event in scope |
-| `$scopeOnce(name, scope, callback)`                       | Listen once in scope |
-| `$scopeOn(name, scope, callback)`.                        | Single listener in scope |
-| `$scopeOnMultiple(name, scope, callback)`                 | Multiple listeners |
-| `$scopeOnCached(name, scope, callback, time?)`            | Cached listener |
-| `$scopeOnCachedMultiple(name, scope, callback, time?)`.   | Cached multi |
-| `$scopeOff(name, scope, callback?)`.                      | Remove listener |
-| `$scopeOffAll(name, scope)`.                              | Remove all listeners |
+| Method                                                 | Description                   |
+| ------------------------------------------------------ | ----------------------------- |
+| `$scopeEmit(scope, name, ...args)`                     | Emit event within scope       |
+| `$scopeOnce(scope, name, callback)`                    | Listen once in scope          |
+| `$scopeOn(scope, name, callback)`                      | Single listener in scope      |
+| `$scopeOnMultiple(scope, name, callback)`              | Multiple listeners in scope   |
+| `$scopeOnCached(scope, name, callback, time?)`         | Cached listener in scope      |
+| `$scopeOnCachedMultiple(scope, name, callback, time?)` | Cached multi in scope         |
+| `$scopeOff(scope, name, callback?)`                    | Remove listener in scope      |
+| `$scopeOffAll(scope, name)`                            | Remove all listeners in scope |
+
 
 ---
 
-## Design Notes
+## 🧭 Design Principles
 
-- EventBus is **synchronous**
-- No internal queue, no async scheduling
-- Deterministic execution order
-- Designed for **UI signaling**, not data flow
+- Synchronous execution
+- Deterministic ordering
+- No async queue
+- No internal scheduler
+- No replay
+- No state retention
+- No middleware system
 
 If you need:
-- state → use a store
-- async pipelines → use effects
-- business logic → keep it outside EventBus
+
+- State → use a store  
+- Async orchestration → use effects  
+- Business logic → keep it outside EventBus  
 
 ---
 
-## Non-goals
+## 🔍 Comparison
 
-eventbus-z is intentionally minimal.
+| Criteria                  | eventbus-z  | mitt       |
+| ------------------------- | ----------- | ---------- |
+| Emit / Listen             | ✅          | ✅          |
+| Once listener             | ✅ Built-in | ❌ Manual   |
+| Multiple listener control | ✅          | ❌          |
+| Cached listener           | ✅          | ❌          |
+| Scoped events             | ✅          | ❌          |
+| Multi-instance            | ✅          | ❌          |
+| Micro-frontend safe       | ✅          | ❌          |
+| Typed event map           | ✅          | ⚠️ Limited  |
+| Dependencies              | 0           | 0          |
+| Bundle size               | Small       | Smaller    |
 
-It does NOT provide:
+---
+
+## 🚀 What Makes It Different?
+
+Unlike minimal pub/sub libraries:
+
+- Scoped event isolation
+- Built-in once & cached listeners
+- Deterministic synchronous execution
+- Global shared bus + isolated instances
+- Micro-frontend safe by design
+
+It stays minimal — but infrastructure-ready.
+
+---
+
+## 🚫 Non-goals
+
+eventbus-z intentionally does NOT provide:
+
 - State management
-- Async pipelines or queues
-- Middleware or plugins
+- Async pipelines
+- Middleware system
 - Event replay / history
-- Rx / stream semantics
+- Stream / Rx semantics
 
 ---
 
-## Comparison with mitt
-
-| Feature / Library            | **eventbus-z**                   | **mitt**             |
-| ---------------------------- | -------------------------------- | -------------------- |
-| Core purpose                 | UI signaling / infra event bus   | Minimal pub/sub      |
-| Emit / listen                | ✅                               | ✅                   |
-| Once listener                | ✅ Built-in                      | ❌ Manual            |
-| Multiple listeners control   | ✅ (`single` / `multiple`)       | ❌                   |
-| Cached / throttled emit      | ✅ (`timeCached`)                | ❌                   |
-| Scoped events                | ✅ (`scopeName`)                 | ❌                   |
-| Global + isolated instances  | ✅                               | ❌ (single instance) |
-| micro-frontend / iframe safe | ✅ (`window.top` / `globalThis`) | ❌                   |
-| Typed Event Map (TS)         | ✅ Supported                     | ⚠️ Limited           |
-| Test isolation               | ✅ (`createEventBus`)            | ⚠️ Manual            |
-| Middleware / plugins         | ❌ (by design)                   | ❌                   |
-| Bundle size                  | Small                            | Smaller             |
-| Learning curve               | Low                              | Very low            |
-
----
-
-## License
+## 📜 License
 
 MIT

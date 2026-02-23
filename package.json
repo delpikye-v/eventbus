@@ -1,13 +1,28 @@
 {
   "name": "eventbus-z",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Minimal, framework-agnostic EventBus for UI signaling and cross-runtime communication",
-  "main": "build/index.js",
-  "module": "build/index.esm.js",
-  "browser": "build/index.js",
-  "unpkg": "build/index.min.js",
-  "types": "build/index.d.ts",
-  "files": ["build"],
+  "license": "MIT",
+  "author": "Delpi.Kye",
+  "sideEffects": false,
+
+  "type": "module",
+
+  "main": "./build/index.cjs.js",
+  "module": "./build/index.esm.js",
+  "types": "./build/index.d.ts",
+
+  "exports": {
+    ".": {
+      "types": "./build/index.d.ts",
+      "import": "./build/index.esm.js",
+      "require": "./build/index.cjs.js"
+    }
+  },
+
+  "files": [
+    "build"
+  ],
   "scripts": {
     "clean": "rimraf build",
     "build": "rollup -c",
@@ -18,6 +33,9 @@
     "url": "https://github.com/delpikye-v/eventbus.git"
   },
   "homepage": "https://github.com/delpikye-v/eventbus#readme",
+  "bugs": {
+    "url": "https://github.com/delpikye-v/eventbus/issues"
+  },
   "keywords": [
     "eventbus",
     "event-bus",
@@ -30,11 +48,6 @@
     "cross-window",
     "typescript"
   ],
-  "author": "Delpi.Kye",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/delpikye-v/eventbus/issues"
-  },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.8",
     "@rollup/plugin-node-resolve": "^15.2.3",
