@@ -1,6 +1,6 @@
 {
   "name": "eventbus-z",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "description": "Minimal, framework-agnostic EventBus for UI signaling and cross-runtime communication",
   "license": "MIT",
   "author": "Delpi.Kye",
