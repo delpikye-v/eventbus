@@ -1,7 +1,7 @@
 {
   "name": "eventbus-z",
-  "version": "2.3.2",
-  "description": "Minimal, framework-agnostic EventBus for UI signaling and cross-runtime communication",
+  "version": "2.4.0",
+  "description": "Minimal, synchronous, framework-agnostic EventBus and EventEmitter alternative for UI signaling, micro-frontends, and TypeScript projects",
   "license": "MIT",
   "author": "Delpi.Kye",
   "sideEffects": false,
@@ -28,6 +28,7 @@
     "build": "rollup -c",
     "prepublishOnly": "npm run clean && npm run build"
   },
+
   "repository": {
     "type": "git",
     "url": "https://github.com/delpikye-v/eventbus.git"
@@ -36,18 +37,33 @@
   "bugs": {
     "url": "https://github.com/delpikye-v/eventbus/issues"
   },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/delpikye-v"
+  },
+
   "keywords": [
     "eventbus",
     "event-bus",
     "event-emitter",
+    "event emitter alternative",
     "pubsub",
+    "pub-sub",
     "signal",
-    "notify",
+    "notification",
+    "synchronous",
+    "sync event bus",
+    "lightweight",
+    "minimal",
+    "typescript",
+    "typed event bus",
     "micro-frontend",
     "iframe",
     "cross-window",
-    "typescript"
+    "frontend infrastructure",
+    "ui signaling"
   ],
+
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.8",
     "@rollup/plugin-node-resolve": "^15.2.3",
